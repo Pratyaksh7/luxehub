@@ -6,14 +6,16 @@ import HomePageHero from "./components/HomePageHero";
 import NewArrival from "./components/NewArrival";
 
 const HomePage = () => {
-  return <div>
-    <HomePageHero />
-    <HomePageFlashSale />
-    <BrowseByCategory />
-    <BestSellingProducts />
-    <ExploreOurProducts />
-    <NewArrival />
-  </div>;
+  return (
+    <div>
+      <HomePageHero />
+      <HomePageFlashSale />
+      <BrowseByCategory />
+      <BestSellingProducts />
+      <ExploreOurProducts />
+      <NewArrival />
+    </div>
+  );
 };
 
 export default HomePage;
