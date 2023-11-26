@@ -36,19 +36,19 @@ const BestSellingProducts = () => {
             <h4 className="text-green-500 font-semibold">Categories</h4>
             <h1 className="text-6xl">Enhance Your Music Experience</h1>
             <div className="time flex justify-start items-center gap-4">
-              <div className="days flex flex-col w-fit p-2 w-[80px] h-[80px] bg-white text-black rounded-full items-center justify-center">
+              <div className="days flex flex-col p-2 w-[80px] h-[80px] bg-white text-black rounded-full items-center justify-center">
                 <h4 className="text-xl font-medium">03</h4>
                 <small className="text-sm font-normal">Days</small>
               </div>
-              <div className="hours flex flex-col w-fit p-2 w-[80px] h-[80px] bg-white text-black rounded-full items-center justify-center">
+              <div className="hours flex flex-col p-2 w-[80px] h-[80px] bg-white text-black rounded-full items-center justify-center">
                 <h4 className="text-xl font-medium">23</h4>
                 <small className="text-sm font-normal">Hours</small>
               </div>
-              <div className="minutes flex flex-col w-fit p-2 w-[80px] h-[80px] bg-white text-black rounded-full items-center justify-center">
+              <div className="minutes flex flex-col p-2 w-[80px] h-[80px] bg-white text-black rounded-full items-center justify-center">
                 <h4 className="text-xl font-medium">19</h4>
                 <small className="text-sm font-normal">Minutes</small>
               </div>
-              <div className="seconds flex flex-col w-fit p-2 w-[80px] h-[80px] bg-white text-black rounded-full items-center justify-center">
+              <div className="seconds flex flex-col p-2 w-[80px] h-[80px] bg-white text-black rounded-full items-center justify-center">
                 <h4 className="text-xl font-medium">56</h4>
                 <small className="text-sm font-normal">Seconds</small>
               </div>

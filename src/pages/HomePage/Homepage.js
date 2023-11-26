@@ -1,3 +1,4 @@
+import Footer from "../../components/Footer";
 import BestSellingProducts from "./components/BestSellingProducts";
 import BrowseByCategory from "./components/BrowseByCategory";
 import ExploreOurProducts from "./components/ExploreOurProducts";
@@ -14,6 +15,7 @@ const HomePage = () => {
       <BestSellingProducts />
       <ExploreOurProducts />
       <NewArrival />
+      <Footer />
     </div>
   );
 };
