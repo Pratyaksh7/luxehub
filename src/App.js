@@ -2,6 +2,7 @@ import LoginPage from "./pages/Auth/LoginPage";
 import SingupPage from "./pages/Auth/SingupPage";
 import Cart from "./pages/Cart/Cart";
 import HomePage from "./pages/HomePage/Homepage";
+import WishList from "./pages/WishList/WishList";
 
 export default function App() {
   return (
@@ -9,7 +10,8 @@ export default function App() {
       {/* <HomePage /> */}
       {/* <SingupPage /> */}
       {/* <LoginPage /> */}
-      <Cart />
+      {/* <Cart /> */}
+      <WishList />
     </>
   );
 }
