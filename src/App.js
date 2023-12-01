@@ -3,6 +3,7 @@ import SingupPage from "./pages/Auth/SingupPage";
 import Cart from "./pages/Cart/Cart";
 import Checkout from "./pages/Checkout/Checkout";
 import HomePage from "./pages/HomePage/Homepage";
+import ProductDetailPage from "./pages/ProductDetailPage/ProductDetailPage";
 import WishList from "./pages/WishList/WishList";
 
 export default function App() {
@@ -13,7 +14,8 @@ export default function App() {
       {/* <LoginPage /> */}
       {/* <Cart /> */}
       {/* <WishList /> */}
-      <Checkout />
+      {/* <Checkout /> */}
+      <ProductDetailPage />
     </>
   );
 }
