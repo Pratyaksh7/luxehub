@@ -9,13 +9,13 @@ import WishList from "./pages/WishList/WishList";
 export default function App() {
   return (
     <>
-      {/* <HomePage /> */}
+      <HomePage />
       {/* <SingupPage /> */}
       {/* <LoginPage /> */}
       {/* <Cart /> */}
       {/* <WishList /> */}
       {/* <Checkout /> */}
-      <ProductDetailPage />
+      {/* <ProductDetailPage /> */}
     </>
   );
 }
