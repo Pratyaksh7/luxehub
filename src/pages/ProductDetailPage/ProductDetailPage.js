@@ -14,17 +14,30 @@ import { Minus, Plus } from "lucide-react";
 import Delivery from "../../assets/images/icon-delivery.png";
 import Return from "../../assets/images/Icon-return.png";
 import Footer from "../../components/Footer";
+import MiniDeliveryComponent from "./components/MiniDeliveryComponent";
+import Navbar from "../../components/Navbar";
+import { Divider } from "antd";
 const ProductDetailPage = () => {
+  const SizeData = [
+    { size: "XS", isActive: true },
+    { size: "S", isActive: false },
+    { size: "M", isActive: true },
+    { size: "L", isActive: false },
+    { size: "XL", isActive: false },
+  ];
+
   return (
     <>
-      <div className="p-5 w-[80%] mx-auto mb-20 flex flex-col gap-20">
-        <div className="hamburger text-sm my-5">
+      <Navbar />
+      <Divider />
+      <div className="p-10 pt-0 flex-2 md:p-5 md:w-[80%] md:mx-auto mb-20 flex flex-col gap-20">
+        <div className="hamburger text-sm my-1 md:my-5">
           <span className="text-gray-500">Account / Gaming /</span> Havic HV
           G-92 Gamepad
         </div>
 
-        <div class="flex gap-10 mb-10">
-          <div class="col-1 flex-2 flex flex-col gap-3">
+        <div class="flex flex-col md:flex md:flex-row gap-10 mb-10">
+          <div class="col-1 flex-2 order-2 md:order-1 flex md:flex-col gap-3">
             <div className="image bg-slate-100 w-[150px] h-auto p-4">
               <img src={Game1} alt="" />
             </div>
@@ -41,12 +54,12 @@ const ProductDetailPage = () => {
               <img src={Game4} alt="" />
             </div>
           </div>
-          <div class="col-2 flex-1 bg-slate-100 flex justify-center items-center">
+          <div class="col-2 flex-1 order-1 md:order-2 bg-slate-100 flex justify-center items-center">
             <div className="image p-4">
               <img src={Game5} alt="" />
             </div>
           </div>
-          <div class="col-3 flex-1 p-4">
+          <div class="col-3 flex-1 order-3 p-4">
             <div className="name-price-desc border-b border-black pb-2 pr-5">
               <h1 className="text-3xl font-medium mb-2">
                 Havic HV G-92 Gamepad
@@ -80,21 +93,18 @@ const ProductDetailPage = () => {
 
               <div className="size flex items-center w-fit gap-5">
                 <h4 className="mr-2 text-xl">Size:</h4>
-                <div className="m flex-1 border border-black px-3 py-2 rounded-md">
-                  XS
-                </div>
-                <div className="m flex-1 border border-black px-3 py-2 rounded-md">
-                  S
-                </div>
-                <div className="m flex-1 border border-red-600 px-3 py-2 rounded-md bg-red-500 text-white">
-                  M
-                </div>
-                <div className="m  flex-1 border border-black px-3 py-2 rounded-md">
-                  L
-                </div>
-                <div className="m flex-1 border border-black px-3 py-2 rounded-md">
-                  XL
-                </div>
+
+                {SizeData.map((size) => (
+                  <div
+                    className={`m flex-1 border ${
+                      size.isActive
+                        ? "border-red-600 bg-red-500 text-white"
+                        : "border-black"
+                    } px-3 py-2 rounded-md`}
+                  >
+                    {size.size}
+                  </div>
+                ))}
               </div>
 
               <div className="flex gap-5">
@@ -125,30 +135,18 @@ const ProductDetailPage = () => {
             </div>
             <div className="delivery border border-black rounded-md mt-6">
               <div className="upper p-4 border-b-2 border-black">
-                <div className="info flex items-center gap-4">
-                  <div className="icon">
-                    <img src={Delivery} alt="" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium">Free Delivery</h3>
-                    <p className="font-medium">
-                      Enter your postal code for Delivery Availability
-                    </p>
-                  </div>
-                </div>
+                <MiniDeliveryComponent
+                  image={Delivery}
+                  heading={"Free Delivery"}
+                  para={"Enter your postal code for Delivery Availability"}
+                />
               </div>
               <div className="lower p-4">
-                <div className="info flex items-center gap-4">
-                  <div className="icon">
-                    <img src={Return} alt="" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium">Return Delivery</h3>
-                    <p className="font-medium">
-                      Free 30 Days Delivery Returns. Details{" "}
-                    </p>
-                  </div>
-                </div>
+                <MiniDeliveryComponent
+                  image={Return}
+                  heading={"Return Delivery"}
+                  para={"Free 30 Days Delivery Returns. Details"}
+                />
               </div>
             </div>
           </div>
@@ -162,7 +160,7 @@ const ProductDetailPage = () => {
             <div className="left w-1/2 flex-col gap-1">
               <SectionNameAndHeading name="Related Item" heading="" />
             </div>
-            <div className="product-list px-5 flex justify-start gap-5 flex-wrap">
+            <div className="product-list px-2 md:px-5 flex gap-10 justify-evenly md:justify-start md:gap-5 flex-wrap">
               <ProductCard
                 image={GamePad}
                 discount="-40%"

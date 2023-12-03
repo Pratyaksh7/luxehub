@@ -1,7 +1,8 @@
-import { Table } from "antd";
+import { Divider, Table } from "antd";
 import Image1 from "../../assets/images/547953_9C2ST_8746_001_082_0000_Light-Gucci-Savoy-medium-duffle-bag 1.png";
 import Image2 from "../../assets/images/gamepad.png";
 import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar";
 const columns = [
   {
     title: "Product",
@@ -63,8 +64,10 @@ const data = [
 const Cart = () => {
   return (
     <>
-      <div className="p-5 w-[80%] mx-auto">
-        <div className="hamburger text-sm my-16">
+      <Navbar />
+      <Divider />
+      <div className="p-5 md:w-[80%] md:mx-auto">
+        <div className="hamburger text-sm md:my-16 my-8">
           <span className="text-gray-500">Home / </span> Cart
         </div>
         <Table
@@ -81,18 +84,18 @@ const Cart = () => {
           </button>
         </div>
 
-        <div className="totalCart flex justify-between my-16">
-          <div className="coupon flex justify-start items-start gap-5 w-1/2">
+        <div className="totalCart flex flex-col md:flex-row md:justify-between my-8 md:my-16 ">
+          <div className="coupon flex justify-start items-start gap-5 pt-2">
             <input
               type="text"
-              className="border border-black/50 outline-none px-2 py-2 rounded-sm"
+              className="border border-black/50 outline-none px-2 py-2 rounded-sm flex-1"
               placeholder="Coupon Code"
             />
             <button className="bg-red-500/90 text-white py-2 px-8 rounded-sm border border-black/20">
               Apply Coupon
             </button>
           </div>
-          <div className="cart-total flex flex-col border border-black w-2/5 py-10 px-5">
+          <div className="cart-total flex flex-col border mt-5 md:mt-0 border-black md:w-2/5 py-10 px-5">
             <div>
               <h3 className="text-2xl font-medium mb-5">Cart Total</h3>
               <div className="py-3 flex justify-between border-b-2 border-black/50">
@@ -116,7 +119,7 @@ const Cart = () => {
           </div>
         </div>
       </div>
-        <Footer />
+      <Footer />
     </>
   );
 };

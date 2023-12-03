@@ -4,10 +4,14 @@ import LCD from "../../assets/images/g27cq4-500x500 1.png";
 import Chair from "../../assets/images/sam-moghadam-khamseh-kvmdsTrGOBM-unsplash 1.png";
 import ProductCard from "../../components/ProductCard";
 import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar";
+import { Divider } from "antd";
 const WishList = () => {
   return (
     <div>
-      <div className="p-5 w-[80%] mx-auto">
+      <Navbar />
+      <Divider />
+      <div className="p-5 pt-0 w-[80%] mx-auto">
         <div className="py-5 flex justify-between items-center mx-auto">
           <p>Wishlist (4)</p>
           <button className=" py-3 px-8 rounded-sm border border-black/20">
@@ -57,7 +61,6 @@ const WishList = () => {
           <button className=" py-3 px-8 rounded-sm border border-black/20">
             See All
           </button>
-          
         </div>
 
         <div className="product-list flex justify-start gap-5 flex-wrap">
