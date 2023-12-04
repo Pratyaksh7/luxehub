@@ -10,8 +10,8 @@ export default function App() {
   return (
     <>
       <HomePage />
-      <SingupPage />
-      <LoginPage />
+      {/* <SingupPage /> */}
+      {/* <LoginPage /> */}
       {/* <Cart /> */}
       {/* <WishList /> */}
       {/* <Checkout /> */}

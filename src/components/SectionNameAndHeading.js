@@ -6,7 +6,7 @@ const SectionNameAndHeading = ({name, heading}) => {
         <p className="text-xs text-red-500 font-semibold">{name}</p>
       </div>
       <div className="l-left-lower mt-5">
-        <div className="bigHeading text-5xl w-full">{heading}</div>
+        <div className="bigHeading text-3xl font-medium md:text-5xl w-full">{heading}</div>
       </div>
     </>
   );

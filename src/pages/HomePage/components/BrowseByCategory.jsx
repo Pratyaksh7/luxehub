@@ -15,17 +15,17 @@ import SmartWatchWhite from "../../../assets/images/categories/Category-SmartWat
 
 const BrowseByCategory = () => {
   return (
-    <div className="container px-10 mx-auto">
-      <div className="flex justify-between items-end my-10">
-        <div className="left w-1/2 flex-col gap-1">
-          <SectionNameAndHeading
-            name="Categories"
-            heading="Browse By Category"
-          />
+    <div className="md:w-[90%] px-2 mx-auto">
+      <div className="flex flex-col p-5 md:justify-between md:items-end md:my-10">
+        <div className="left flex-1 flex w-full flex-row gap-2  p-2">
+          <div className="l-left flex-col flex-2  mr-10 md:mr-20">
+            <SectionNameAndHeading name="Categories" heading="Browse By Category" />
+          </div>
         </div>
-        <div className="right w-1/2"></div>
+        <div className="right flex-1"></div>
       </div>
-      <div className="category-list px-10 flex justify-evenly gap-5 flex-wrap">
+      
+      <div className="category-list p-4 gap-3 md:px-10 flex justify-evenly md:gap-5 flex-wrap">
         <Category image={Phones} image2={PhonesWhite} name="Phones" active="false" />
         <Category image={Computers} image2={ComputersWhite} name="Computers" active="false" />
         <Category image={SmartWatch} image2={SmartWatchWhite} name="SmartWatch" active="false" />

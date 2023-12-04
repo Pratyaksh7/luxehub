@@ -30,7 +30,7 @@ const ProductDetailPage = () => {
     <>
       <Navbar />
       <Divider />
-      <div className="p-10 pt-0 flex-2 md:p-5 md:w-[80%] md:mx-auto mb-20 flex flex-col gap-20">
+      <div className="p-10 pt-0 flex-2 md:p-5 md:w-[90%] md:mx-auto mb-20 flex flex-col gap-20">
         <div className="hamburger text-sm my-1 md:my-5">
           <span className="text-gray-500">Account / Gaming /</span> Havic HV
           G-92 Gamepad
