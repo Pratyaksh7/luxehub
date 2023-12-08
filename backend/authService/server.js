@@ -1,10 +1,28 @@
+require("dotenv").config();
+require("./config/db").connect();
 const express = require("express");
+const app = express();
+const cors = require("cors");
+const bodyParser = require("body-parser");
 
-const app = express()
+app.use(
+  bodyParser.json({
+    limit: "50mb",
+  })
+);
 
-app.get('/auth', async(req, res, next) => {
-    res.status(200).send("Welcome to Auth Service")
-})
+app.use(
+    bodyParser.urlencoded({
+        limit: "50mb",
+        parameterLimit: 100000,
+        extended: true,
+    })
+)
+
+app.use(cors());
+
+//-----Custom Routes ------ 
+app.use("/auth", require("./routes/auth.route"));
 
 //apis required for auth service
 // 1. User Registration API
@@ -17,8 +35,7 @@ app.get('/auth', async(req, res, next) => {
 // 8. Role Management API
 // 9. Token Refresh API
 
-
 const PORT = 3001;
 app.listen(PORT, () => {
-    console.log(`Auth Service running at port ${PORT}`)
-})
+  console.log(`Auth Service running at port ${PORT}`);
+});
