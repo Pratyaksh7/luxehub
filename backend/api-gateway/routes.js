@@ -2,7 +2,6 @@ const ROUTES = [
     {
         url: '/auth',
         auth: false,
-        creditCheck: false,
         // rateLimit: {
         //     windowMs: 15 * 60 * 1000,
         //     max: 10
@@ -15,6 +14,21 @@ const ROUTES = [
             },
         }
     },
+    {
+        url: '/products',
+        auth: false,
+         // rateLimit: {
+        //     windowMs: 15 * 60 * 1000,
+        //     max: 10
+        // },
+        proxy: {
+            target: "http://localhost:3002",
+            changeOrigin: true,
+            pathRewrite: {
+                ['^/']: '',
+            }
+        }
+    }
     // {
     //     url: '/premium',
     //     auth: true,

@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Smartphone X",
+        "description": "A high-end smartphone with advanced features.",
+        "categories": [
+            "Electronics",
+            "Mobile Phones"
+        ],
+        "price": 799.99,
+        "currencies": ["INR"],
+        "stock_qty": 100,
+        "manufacturer": "TechCo",
+        "images": [
+            "https://example.com/images/smartphone_x_1.jpg",
+            "https://example.com/images/smartphone_x_2.jpg"
+        ],
+        "attributes": {
+            "color": ["Black", "White"],
+            "storage": ["128GB", "256GB"]
+        },
+        "tags": [
+            "Smartphone",
+            "High-End",
+            "Tech"
+        ],
+        "rating": 4.5,
+        "reviews": []
+    },
+    {
+        "name": "UltraHD Smart TV",
+        "description": "A large-screen smart TV with UltraHD resolution.",
+        "categories": [
+            "Electronics",
+            "Televisions"
+        ],
+        "price": 1299.99,
+        "currencies": [
+            "INR"
+        ],
+        "stock_qty": 50,
+        "manufacturer": "ElectroTech",
+        "images": [
+            "https://example.com/images/smart_tv_1.jpg",
+            "https://example.com/images/smart_tv_2.jpg"
+        ],
+        "attributes": {
+            "screenSize": "65 inches",
+            "resolution": "UltraHD"
+        },
+        "tags": [
+            "Smart TV",
+            "UltraHD",
+            "Entertainment"
+        ],
+        "releaseDate": "2022-02-20",
+        "rating": 4.8,
+        "reviews": []
+    }
+  ]
