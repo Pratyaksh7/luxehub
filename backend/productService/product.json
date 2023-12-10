@@ -55,5 +55,77 @@
         "releaseDate": "2022-02-20",
         "rating": 4.8,
         "reviews": []
+    },
+    {
+        "name": "Elegant Dress",
+        "description": "A stylish and elegant dress for women.",
+        "categories": [
+            "Fashion",
+            "Women's Clothing"
+        ],
+        "price": 129.99,
+        "currencies": [
+            "USD"
+        ],
+        "stock_qty": 50,
+        "manufacturer": "Fashionista",
+        "images": [
+            "https://example.com/images/elegant_dress_1.jpg",
+            "https://example.com/images/elegant_dress_2.jpg"
+        ],
+        "attributes": {
+            "color": [
+                "Red",
+                "Blue"
+            ],
+            "size": [
+                "S",
+                "M",
+                "L"
+            ]
+        },
+        "tags": [
+            "Dress",
+            "Elegant",
+            "Fashion"
+        ],
+        "rating": 4.2,
+        "reviews": []
+    },
+    {
+        "name": "Classic Suit",
+        "description": "A classic and sophisticated suit for men.",
+        "categories": [
+            "Fashion",
+            "Men's Clothing"
+        ],
+        "price": 299.99,
+        "currencies": [
+            "USD"
+        ],
+        "stock_qty": 30,
+        "manufacturer": "Gentleman's Attire",
+        "images": [
+            "https://example.com/images/classic_suit_1.jpg",
+            "https://example.com/images/classic_suit_2.jpg"
+        ],
+        "attributes": {
+            "color": [
+                "Black",
+                "Navy"
+            ],
+            "size": [
+                "M",
+                "L",
+                "XL"
+            ]
+        },
+        "tags": [
+            "Suit",
+            "Classic",
+            "Fashion"
+        ],
+        "rating": 4.8,
+        "reviews": []
     }
   ]

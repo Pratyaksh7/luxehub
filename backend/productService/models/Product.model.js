@@ -26,5 +26,8 @@ const ProductSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Add a text index on the fields you want to search using $text
+ProductSchema.index({ name: 'text', description: 'text', tags: 'text' });
+
 const Product = new mongoose.model("Product", ProductSchema);
 module.exports = Product;
