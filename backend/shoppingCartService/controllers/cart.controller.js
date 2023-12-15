@@ -174,7 +174,7 @@ exports.getCartTotal = async (req, res, next) => {
     }, 0);
     return res
       .status(200)
-      .json({ message: "Total cost retrieved successfully", data: total });
+      .json({ status: 'ok', message: "Total cost retrieved successfully", data: total });
   } catch (error) {
     console.log(error);
     next(error);
