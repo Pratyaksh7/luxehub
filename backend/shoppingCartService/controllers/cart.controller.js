@@ -1,5 +1,6 @@
 const { getPriceForProduct, applyDiscountCode } = require("../helper");
 const ShoopingCart = require("../models/ShoppingCart.model");
+const WishList = require("../models/Wishlist.model");
 
 exports.Ping = async (req, res, next) => {
   try {
@@ -159,6 +160,99 @@ exports.clearCart = async (req, res, next) => {
   }
 };
 
+/* Wishlist apis */
+exports.addToWishList = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { productId, productName, quantity, price } = req.body;
+    let wishlist = await WishList.findOne({ userId });
+
+    if (!wishlist) {
+      wishlist = new WishList({
+        userId,
+        items: [],
+      });
+    }
+
+    const existingItem = wishlist.items.find(
+      (item) => item.productId === productId
+    );
+    if (!existingItem) {
+      wishlist.items.push({
+        productId,
+        productName,
+        quantity: quantity || 1,
+        price,
+      });
+    }
+
+    await wishlist.save();
+
+    return res.status(201).json({
+      status: "ok",
+      message: "Product added to wishlist successfully",
+      data: wishlist,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+exports.getWishList = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const wishlist = await WishList.findOne({ userId });
+
+    if (!wishlist) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "Wishlist not found" });
+    }
+    return res
+      .status(200)
+      .json({ status: "ok", message: "Data found.", data: wishlist.items });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+exports.removeFromWishList = async (req, res, next) => {
+  try {
+    const { userId, itemId } = req.params;
+    const wishlist = await WishList.findOne({ userId });
+
+    if (!wishlist) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "Wishlist not found" });
+    }
+
+    const itemIndex = wishlist.items.findIndex((item) => item._id == itemId);
+    if (itemIndex === -1) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "Item not found in wishlist" });
+    }
+
+    wishlist.items.splice(itemIndex, 1);
+
+    await wishlist.save();
+
+    res
+      .status(200)
+      .json({
+        status: "ok",
+        message: "Product removed from wishlist successfully",
+        data: wishlist,
+      });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 exports.getCartTotal = async (req, res, next) => {
   const { userId } = req.params;
   try {
@@ -172,9 +266,11 @@ exports.getCartTotal = async (req, res, next) => {
       const productPrice = getPriceForProduct(item.productId);
       return acc + productPrice * item.quantity;
     }, 0);
-    return res
-      .status(200)
-      .json({ status: 'ok', message: "Total cost retrieved successfully", data: total });
+    return res.status(200).json({
+      status: "ok",
+      message: "Total cost retrieved successfully",
+      data: total,
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -197,12 +293,10 @@ exports.applyDiscountCode = async (req, res, next) => {
     const discountedCart = await applyDiscountCode(existingCart, discountCode);
 
     await discountedCart.save();
-    return res
-      .status(200)
-      .json({
-        message: "Discount code applied successfully",
-        data: discountedCart,
-      });
+    return res.status(200).json({
+      message: "Discount code applied successfully",
+      data: discountedCart,
+    });
   } catch (error) {
     console.log(error);
     next(error);
