@@ -1,0 +1,131 @@
+[
+    {
+        "name": "Smartphone X",
+        "description": "A high-end smartphone with advanced features.",
+        "categories": [
+            "Electronics",
+            "Mobile Phones"
+        ],
+        "price": 799.99,
+        "currencies": ["INR"],
+        "stock_qty": 100,
+        "manufacturer": "TechCo",
+        "images": [
+            "https://example.com/images/smartphone_x_1.jpg",
+            "https://example.com/images/smartphone_x_2.jpg"
+        ],
+        "attributes": {
+            "color": ["Black", "White"],
+            "storage": ["128GB", "256GB"]
+        },
+        "tags": [
+            "Smartphone",
+            "High-End",
+            "Tech"
+        ],
+        "rating": 4.5,
+        "reviews": []
+    },
+    {
+        "name": "UltraHD Smart TV",
+        "description": "A large-screen smart TV with UltraHD resolution.",
+        "categories": [
+            "Electronics",
+            "Televisions"
+        ],
+        "price": 1299.99,
+        "currencies": [
+            "INR"
+        ],
+        "stock_qty": 50,
+        "manufacturer": "ElectroTech",
+        "images": [
+            "https://example.com/images/smart_tv_1.jpg",
+            "https://example.com/images/smart_tv_2.jpg"
+        ],
+        "attributes": {
+            "screenSize": "65 inches",
+            "resolution": "UltraHD"
+        },
+        "tags": [
+            "Smart TV",
+            "UltraHD",
+            "Entertainment"
+        ],
+        "releaseDate": "2022-02-20",
+        "rating": 4.8,
+        "reviews": []
+    },
+    {
+        "name": "Elegant Dress",
+        "description": "A stylish and elegant dress for women.",
+        "categories": [
+            "Fashion",
+            "Women's Clothing"
+        ],
+        "price": 129.99,
+        "currencies": [
+            "USD"
+        ],
+        "stock_qty": 50,
+        "manufacturer": "Fashionista",
+        "images": [
+            "https://example.com/images/elegant_dress_1.jpg",
+            "https://example.com/images/elegant_dress_2.jpg"
+        ],
+        "attributes": {
+            "color": [
+                "Red",
+                "Blue"
+            ],
+            "size": [
+                "S",
+                "M",
+                "L"
+            ]
+        },
+        "tags": [
+            "Dress",
+            "Elegant",
+            "Fashion"
+        ],
+        "rating": 4.2,
+        "reviews": []
+    },
+    {
+        "name": "Classic Suit",
+        "description": "A classic and sophisticated suit for men.",
+        "categories": [
+            "Fashion",
+            "Men's Clothing"
+        ],
+        "price": 299.99,
+        "currencies": [
+            "USD"
+        ],
+        "stock_qty": 30,
+        "manufacturer": "Gentleman's Attire",
+        "images": [
+            "https://example.com/images/classic_suit_1.jpg",
+            "https://example.com/images/classic_suit_2.jpg"
+        ],
+        "attributes": {
+            "color": [
+                "Black",
+                "Navy"
+            ],
+            "size": [
+                "M",
+                "L",
+                "XL"
+            ]
+        },
+        "tags": [
+            "Suit",
+            "Classic",
+            "Fashion"
+        ],
+        "rating": 4.8,
+        "reviews": []
+    }
+  ]
