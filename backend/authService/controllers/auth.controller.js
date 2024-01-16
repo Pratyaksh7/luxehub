@@ -28,7 +28,7 @@ exports.Signup = async (req, res, next) => {
 
     if (existingUser.length > 0)
       return res
-        .status(200)
+        .status(400)
         .json({ status: "error", message: "User already registered." });
     const encryptedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
@@ -60,10 +60,7 @@ exports.Signin = async (req, res, next) => {
       isEmail = false;
     }
 
-    if (existingUser.length < 1)
-      return res.status(
-        res.status(200).json({ status: "error", message: "User not found" })
-      );
+    if (existingUser.length < 1) return res.status(200).json({ status: "error", message: "User not found" })
     if (await bcrypt.compare(password, existingUser[0].password)) {
       // generate JWT Token
       const token = jwt.sign(
