@@ -17,6 +17,12 @@ import Footer from "../../components/Footer";
 import MiniDeliveryComponent from "./components/MiniDeliveryComponent";
 import Navbar from "../../components/Navbar";
 import { Divider } from "antd";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductById } from "../../features/products/productsSlice";
+import toast from "react-hot-toast";
+
 const ProductDetailPage = () => {
   const SizeData = [
     { size: "XS", isActive: true },
@@ -25,24 +31,44 @@ const ProductDetailPage = () => {
     { size: "L", isActive: false },
     { size: "XL", isActive: false },
   ];
+  const { productId } = useParams();
+  const dispatch = useDispatch();
+  const { error, loading, productInfo, message } = useSelector(
+    (state) => state.products
+  );
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  const handleImageClick = (index) => {
+    setSelectedImageIndex(index);
+  };
+  useEffect(() => {
+    dispatch(fetchProductById(productId));
+  }, [productId]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <>
-      <Navbar />
-      <Divider />
       <div className="p-10 pt-0 flex-2 md:p-5 md:w-[90%] md:mx-auto mb-20 flex flex-col gap-20">
         <div className="hamburger text-sm my-1 md:my-5">
-          <span className="text-gray-500">Account / Gaming /</span> Havic HV
-          G-92 Gamepad
+          <span className="text-gray-500">Account / Gaming /</span>{" "}
+          {productInfo?.name}
         </div>
 
         <div class="flex flex-col md:flex md:flex-row gap-10 mb-10">
           <div class="col-1 flex-2 order-2 md:order-1 flex md:flex-col gap-3">
-            <div className="image bg-slate-100 w-[150px] h-auto p-4">
-              <img src={Game1} alt="" />
-            </div>
+            {productInfo?.images?.map((image, i) => (
+              <div
+                className={`image bg-slate-100 w-[150px] h-auto p-4 cursor-pointer ${selectedImageIndex === i ? "border border-black":""}`}
+                onClick={() => handleImageClick(i)}
+              >
+                <img key={i} src={image} alt={`Image ${i + 1}`} />
+              </div>
+            ))}
 
-            <div className="image bg-slate-100 w-[150px] h-auto p-4">
+            {/* <div className="image bg-slate-100 w-[150px] h-auto p-4">
               <img src={Game2} alt="" />
             </div>
 
@@ -52,36 +78,43 @@ const ProductDetailPage = () => {
 
             <div className="image bg-slate-100 w-[150px] h-auto p-4">
               <img src={Game4} alt="" />
-            </div>
+            </div> */}
           </div>
           <div class="col-2 flex-1 order-1 md:order-2 bg-slate-100 flex justify-center items-center">
-            <div className="image p-4">
-              <img src={Game5} alt="" />
-            </div>
+            {selectedImageIndex !== null && (
+              <div className="image p-4">
+                <img src={productInfo?.images && productInfo?.images[selectedImageIndex]} alt={`Selected Image ${selectedImageIndex + 1}`} />
+              </div>
+            )}
           </div>
           <div class="col-3 flex-1 order-3 p-4">
             <div className="name-price-desc border-b border-black pb-2 pr-5">
-              <h1 className="text-3xl font-medium mb-2">
-                Havic HV G-92 Gamepad
-              </h1>
+              <h1 className="text-3xl font-medium mb-2">{productInfo?.name}</h1>
               <div className="rating flex items-center gap-5 mb-2">
                 <div className="stars flex font-medium">
-                  <img src={Star} alt="" />
-                  <img src={Star} alt="" />
-                  <img src={Star} alt="" />
-                  <img src={Star} alt="" />
-                  <img src={Star} alt="" />
+                  {Array.from({ length: productInfo?.rating })?.map((_, i) => (
+                    <img key={i} src={Star} alt="" />
+                  ))}
                 </div>
-                <p className="count pl-3 text-slate-500 ">(150 Reviews)</p>
-                <p className="border-l pl-4 border-black text-green-400">
-                  In Stock
+                <p className="count pl-3 text-slate-500 ">
+                  ({productInfo?.reviews?.length || 0} Reviews)
                 </p>
+                {productInfo.stock_qty > 0 ? (
+                  <p className="border-l pl-4 border-black text-green-400">
+                    In Stock
+                  </p>
+                ) : (
+                  <p className="border-l pl-4 border-black text-red-400">
+                    Out of Stock
+                  </p>
+                )}
               </div>
-              <h2 className="text-3xl font-light mb-2">$192.00</h2>
+              <h2 className="text-3xl font-light mb-2">
+                {" "}
+                ₹ {productInfo?.price}{" "}
+              </h2>
               <p className="max-w-md leading-6 tracking-wider">
-                PlayStation 5 Controller Skin High quality vinyl with air
-                channel adhesive for easy bubble free install & mess free
-                removal Pressure sensitive.
+                {productInfo?.description}
               </p>
             </div>
             <div className="color-size-buynow flex flex-col gap-4 my-2">
