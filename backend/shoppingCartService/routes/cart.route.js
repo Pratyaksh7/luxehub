@@ -11,11 +11,11 @@ router.post('/:userId/items', cartController.addToCart);
 router.post("/:userId/wishlist", cartController.addToWishList);
 router.post("/:userId/apply-discount", cartController.applyDiscountCode);
 
-router.put('/:userId/items/:itemId', cartController.updateItemQtyInCart);
+router.put('/:userId/items', cartController.updateItemQtyInCart);
 
-router.delete('/:userId/items/:itemId', cartController.removeFromCart);
-router.delete("/:userId/clear", cartController.clearCart);
-router.delete('/:userId/wishlist/:itemId', cartController.removeFromWishList);
+router.delete('/:userId/items/:productId', cartController.removeFromCart);
+// router.delete("/:userId/clear", cartController.clearCart);
+router.delete('/:userId/wishlist/:productId', cartController.removeFromWishList);
 
 
 module.exports = router;

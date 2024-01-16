@@ -1,6 +1,41 @@
+const { default: axios } = require("axios");
 const { getPriceForProduct, applyDiscountCode } = require("../helper");
 const ShoopingCart = require("../models/ShoppingCart.model");
 const WishList = require("../models/Wishlist.model");
+const { SubscribeMessage, CreateChannel } = require("../utils/index");
+
+var channel;
+async function init() {
+  channel = await CreateChannel();
+
+  const messageHandler = async (data) => {
+    const parsedData = JSON.parse(data);
+
+    switch (parsedData?.event) {
+      case "CLEAR_THE_CART":
+        clearCart(parsedData?.userId);
+        break;
+
+      default:
+        return null;
+    }
+  };
+
+  SubscribeMessage(channel, messageHandler);
+
+  // Clear the cart Items
+  async function clearCart(userId) {
+    try {
+      const existingCart = await ShoopingCart.findOne({ userId: userId?._id });
+      existingCart.items = [];
+      await existingCart.save();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
+init();
 
 exports.Ping = async (req, res, next) => {
   try {
@@ -13,6 +48,27 @@ exports.Ping = async (req, res, next) => {
   }
 };
 
+async function getProductDetails(cartItems) {
+  const apiBaseURL = "http://localhost:3002/products";
+
+  const promises = cartItems?.map(async (cartItem) => {
+    const { productId, quantity } = cartItem;
+    const apiUrl = `${apiBaseURL}/${productId}`;
+
+    try {
+      const response = await axios.get(apiUrl);
+
+      const productData = response.data.data;
+      productData.quantity = quantity;
+
+      return productData;
+    } catch (error) {
+      console.error(`Error fetching product ${productId}:`, error.message);
+    }
+  });
+  return await Promise.all(promises);
+}
+
 exports.getCartItems = async (req, res, next) => {
   const { userId } = req.params;
   try {
@@ -23,10 +79,12 @@ exports.getCartItems = async (req, res, next) => {
         message: "Shopping Cart is empty",
         data: { items: [] },
       });
+
+    const productDetails = await getProductDetails(existingCart?.items);
     return res.status(200).json({
       status: "ok",
       message: "Shopping cart retrieved successfully",
-      data: existingCart,
+      data: productDetails,
     });
   } catch (error) {
     console.log(error);
@@ -73,7 +131,7 @@ exports.addToCart = async (req, res, next) => {
 };
 
 exports.removeFromCart = async (req, res, next) => {
-  const { userId, itemId } = req.params;
+  const { userId, productId } = req.params;
   try {
     const existingCart = await ShoopingCart.findOne({ userId });
     if (!existingCart)
@@ -82,7 +140,7 @@ exports.removeFromCart = async (req, res, next) => {
         .json({ status: "error", message: "Shopping Cart Not found" });
 
     const itemIndex = existingCart.items.findIndex(
-      (item) => item._id.toString() === itemId
+      (item) => item.productId.toString() === productId
     );
 
     if (itemIndex === -1)
@@ -105,31 +163,49 @@ exports.removeFromCart = async (req, res, next) => {
 };
 
 exports.updateItemQtyInCart = async (req, res, next) => {
-  const { userId, itemId } = req.params;
-  const { quantity } = req.body;
+  const { userId } = req.params;
+  const productsData = req.body;
+
   try {
-    if (!quantity || quantity <= 0)
-      return res.status(400).json({ error: "Invalid quantity" });
+    if (!Array.isArray(productsData) || productsData.length === 0) {
+      return res.status(400).json({ error: "Invalid product data" });
+    }
+
     const existingCart = await ShoopingCart.findOne({ userId });
-    if (!existingCart)
-      return res
-        .status(400)
-        .json({ status: "error", message: "Shopping Cart Not found" });
 
-    const itemIndex = existingCart.items.findIndex(
-      (item) => item._id.toString() === itemId
-    );
-
-    if (itemIndex === -1)
-      return res.status(404).json({
+    if (!existingCart) {
+      return res.status(400).json({
         status: "error",
-        message: "Item not found in the shopping cart.",
+        message: "Shopping Cart Not found",
       });
-    existingCart.items[itemIndex].quantity = quantity;
+    }
+
+    for (const { productId, quantity } of productsData) {
+      if (!quantity || quantity <= 0) {
+        return res
+          .status(400)
+          .json({ status: "error", message: "Invalid quantity" });
+      }
+
+      const itemIndex = existingCart.items.findIndex(
+        (item) => item.productId.toString() === productId
+      );
+
+      if (itemIndex === -1) {
+        return res.status(404).json({
+          status: "error",
+          message: `Item with productId ${productId} not found in the shopping cart.`,
+        });
+      }
+
+      existingCart.items[itemIndex].quantity = quantity;
+    }
 
     await existingCart.save();
+
     return res.status(200).json({
-      message: "Item quantity updated in the cart successfully",
+      status: "ok",
+      message: "Item quantities updated in the cart successfully",
       existingCart,
     });
   } catch (error) {
@@ -138,27 +214,28 @@ exports.updateItemQtyInCart = async (req, res, next) => {
   }
 };
 
-exports.clearCart = async (req, res, next) => {
-  const { userId } = req.params;
-  try {
-    const existingCart = await ShoopingCart.findOne({ userId });
-    if (!existingCart)
-      return res
-        .status(400)
-        .json({ status: "error", message: "Shopping Cart Not found" });
+// exports.clearCart = async (req, res, next) => {
+//   const { userId } = req.params;
+//   try {
+//     const existingCart = await ShoopingCart.findOne({ userId });
+//     if (!existingCart)
+//       return res
+//         .status(400)
+//         .json({ status: "error", message: "Shopping Cart Not found" });
 
-    existingCart.items = [];
-    await existingCart.save();
+//     existingCart.items = [];
+//     await existingCart.save();
 
-    return res.status(200).json({
-      message: "Shopping cart cleared successfully",
-      data: existingCart,
-    });
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-};
+//     return res.status(200).json({
+//       status: "ok",
+//       message: "Shopping cart cleared successfully",
+//       data: existingCart,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     next(error);
+//   }
+// };
 
 /* Wishlist apis */
 exports.addToWishList = async (req, res, next) => {
@@ -220,7 +297,7 @@ exports.getWishList = async (req, res, next) => {
 
 exports.removeFromWishList = async (req, res, next) => {
   try {
-    const { userId, itemId } = req.params;
+    const { userId, productId } = req.params;
     const wishlist = await WishList.findOne({ userId });
 
     if (!wishlist) {
@@ -229,7 +306,9 @@ exports.removeFromWishList = async (req, res, next) => {
         .json({ status: "error", message: "Wishlist not found" });
     }
 
-    const itemIndex = wishlist.items.findIndex((item) => item._id == itemId);
+    const itemIndex = wishlist.items.findIndex(
+      (item) => item.productId == productId
+    );
     if (itemIndex === -1) {
       return res
         .status(404)
@@ -240,13 +319,11 @@ exports.removeFromWishList = async (req, res, next) => {
 
     await wishlist.save();
 
-    res
-      .status(200)
-      .json({
-        status: "ok",
-        message: "Product removed from wishlist successfully",
-        data: wishlist,
-      });
+    res.status(200).json({
+      status: "ok",
+      message: "Product removed from wishlist successfully",
+      data: wishlist,
+    });
   } catch (error) {
     console.log(error);
     next(error);
