@@ -1,8 +1,35 @@
 import { Cross, Heart, Menu, Search, ShoppingCart, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthdata } from "../features/auth/authSlice";
+import { Link } from "react-router-dom";
+import {
+  fetchCartItems,
+  fetchWishlistItems,
+} from "../features/carts/cartSlice";
 
 const Navbar = () => {
   const [showburger, setshowburger] = useState(false);
+
+  const dispatch = useDispatch();
+  const usercart = useSelector((state) => state.carts);
+
+  useEffect(() => {
+    const token = localStorage.getItem("e_token");
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (token && userData) {
+      const data = {
+        token,
+        userData,
+      };
+      dispatch(setAuthdata(data));
+      setTimeout(() => {
+        dispatch(fetchCartItems(userData?._id));
+        dispatch(fetchWishlistItems(userData?._id));
+      }, 2000);
+    }
+  }, [dispatch]);
+
   return (
     <nav className="relative pt-4">
       <div className="flex p-4 pb-0 gap-5">
@@ -46,12 +73,22 @@ const Navbar = () => {
               <Search />
             </button>
           </div>
-          <a href="">
+          <Link to={"/wishlist"} className="relative">
+            {usercart?.wishlistData?.length > 0 && (
+              <p className="count absolute top-[-20px] right-[-10px] text-white bg-red-400 border border-none h-[25px] flex items-center justify-center -z-10 w-[25px] rounded-3xl">
+                {usercart?.wishlistData?.length}
+              </p>
+            )}
             <Heart />
-          </a>
-          <a href="">
+          </Link>
+          <Link to={"/cart"} className="relative">
+            {usercart?.cartData?.length > 0 && (
+              <p className="count absolute top-[-20px] right-[-10px] text-white bg-red-400 border border-none h-[25px] flex items-center justify-center -z-10 w-[25px] rounded-3xl">
+                {usercart?.cartData && usercart?.cartData?.length}
+              </p>
+            )}
             <ShoppingCart />
-          </a>
+          </Link>
         </div>
         <button
           className="flex-2 float-right flex items-center justify-end lg:hidden"

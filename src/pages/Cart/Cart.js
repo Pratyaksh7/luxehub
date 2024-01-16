@@ -3,83 +3,190 @@ import Image1 from "../../assets/images/547953_9C2ST_8746_001_082_0000_Light-Guc
 import Image2 from "../../assets/images/gamepad.png";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
-const columns = [
-  {
-    title: "Product",
-    dataIndex: "product",
-    width: 400,
-    render: (x, dataObject) => {
-      return (
-        <div className="flex items-center gap-5 p-3">
-          <img src={dataObject?.product_image} alt="" className="h-[50px]" />
-          <p>{dataObject?.product_name}</p>
-        </div>
-      );
-    },
-  },
-  {
-    title: "Price",
-    dataIndex: "price",
-  },
-  {
-    title: "Quantity",
-    dataIndex: "quantity",
-    render: () => {
-      return (
-        <div className="">
-          <input
-            type="number"
-            className="w-[55px] border  border-slate-400 outline-none cursor-none px-2 py-1 rounded-md"
-            defaultValue={"1"}
-          />
-        </div>
-      );
-    },
-  },
-  {
-    title: "SubTotal",
-    dataIndex: "subtotal",
-  },
-];
-
-const data = [
-  {
-    key: "1",
-    product_name: "Hand Bag",
-    product_image: Image1,
-    price: "$650",
-    quantity: "01",
-    subtotal: "$650",
-  },
-  {
-    key: "2",
-    product_name: "H1 Gamepad",
-    product_image: Image2,
-    price: "$550",
-    quantity: "02",
-    subtotal: "$1100",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import {
+  deleteFromCart,
+  fetchCartItems,
+  fetchCartTotalPrice,
+  updateCartItemQuantity,
+  updateItemQtyInCart,
+} from "../../features/carts/cartSlice";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import { Trash2 } from "lucide-react";
 
 const Cart = () => {
+  const dispatch = useDispatch();
+  const usercart = useSelector((state) => state.carts);
+  const { userData } = useSelector((state) => state.auth);
+  const [cartData, setCartData] = useState([]);
+  useEffect(() => {
+    dispatch(fetchCartItems(userData?._id));
+    dispatch(fetchCartTotalPrice(userData?._id));
+
+    if (Array.isArray(usercart?.cartData)) {
+      setCartData(usercart?.cartData);
+    } else {
+      setCartData([]);
+    }
+  }, [dispatch]);
+
+  const handleQuantityChange = (dataObject, newQuantity) => {
+    // Update the local state
+    setCartData((prevCartData) => {
+      return prevCartData?.map((item) => {
+        if (item._id === dataObject._id) {
+          return {
+            ...item,
+            quantity: parseInt(newQuantity) < 0 ? 0 : parseInt(newQuantity, 10), // Ensure it's a valid number
+          };
+        }
+        return item;
+      });
+    });
+
+    // Dispatch the updated quantity to the Redux store
+    dispatch(
+      updateCartItemQuantity({
+        userId: userData?._id,
+        productId: dataObject._id,
+        quantity: parseInt(newQuantity) < 0 ? 0 : parseInt(newQuantity, 10),
+      })
+    );
+  };
+
+  const handleUpdateCart = async (e) => {
+    e.preventDefault();
+    if (usercart?.cartData) {
+      const data = {
+        userId: userData?._id,
+        productData: usercart?.cartData?.map((cartItem) => {
+          return {
+            productId: cartItem._id,
+            quantity: cartItem.quantity,
+          };
+        }),
+      };
+      await dispatch(updateItemQtyInCart(data));
+      await dispatch(fetchCartItems(userData?._id));
+      await dispatch(fetchCartTotalPrice(userData?._id));
+      if (usercart?.error) {
+        toast.error(usercart?.message);
+      } else if (usercart?.rqstStatus === "ok") {
+        toast.success(usercart?.message);
+      }
+    } else {
+      // do noting
+    }
+  };
+
+  const handleDeleteFromCart = async (e, id) => {
+    e.preventDefault();
+    if (id !== "") {
+      const data = {
+        userId: userData?._id,
+        productId: id,
+      };
+      await dispatch(deleteFromCart(data));
+      await dispatch(fetchCartItems(userData?._id));
+      await dispatch(fetchCartTotalPrice(userData?._id));
+      setCartData((prevCartData) =>
+        prevCartData.filter((item) => item._id !== id)
+      );
+      setTimeout(() => {
+        if (usercart?.error) {
+          toast.error(usercart?.message);
+        } else if (usercart?.rqstStatus === "ok") {
+          toast.success(usercart?.message);
+        }
+      }, 2000);
+    } else {
+      // do noting
+    }
+  };
+
+  const columns = [
+    {
+      title: "Product",
+      dataIndex: "product",
+      width: 400,
+      render: (x, dataObject) => {
+        return (
+          <div className="flex items-center gap-5 p-3">
+            <img
+              src={dataObject?.images[0]}
+              alt={dataObject?.name}
+              className="h-[50px]"
+            />
+            <p>{dataObject?.name}</p>
+          </div>
+        );
+      },
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      render: (x, dataObject) => {
+        return (
+          <div className="">
+            <input
+              type="number"
+              className="w-[55px] border  border-slate-400 outline-none cursor-none px-2 py-1 rounded-md"
+              value={dataObject?.quantity}
+              onChange={(e) => handleQuantityChange(dataObject, e.target.value)}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      title: "SubTotal",
+      dataIndex: "subtotal",
+      render: (x, dataObject) => {
+        return <p>₹ {(dataObject?.price * dataObject?.quantity).toFixed(2)}</p>;
+      },
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      render: (x, dataObject) => {
+        console.log({ x, dataObject });
+        return (
+          <>
+            <Trash2
+              className="text-red-500 cursor-pointer"
+              onClick={(e) => handleDeleteFromCart(e, dataObject?._id)}
+            />
+          </>
+        );
+      },
+    },
+  ];
+
   return (
     <>
-      <Navbar />
-      <Divider />
       <div className="p-5 md:w-[80%] md:mx-auto">
         <div className="hamburger text-sm md:my-16 my-8">
           <span className="text-gray-500">Home / </span> Cart
         </div>
         <Table
           columns={columns}
-          dataSource={data}
-          pagination={data.length > 10}
+          dataSource={cartData && cartData}
+          pagination={cartData?.length > 10}
         />
         <div className="buttons py-5 flex justify-between items-center">
           <button className=" py-3 px-8 rounded-sm border border-black/20">
             Return To Shop
           </button>
-          <button className=" py-3 px-8 rounded-sm border border-black/20">
+          <button
+            className=" py-3 px-8 rounded-sm border border-black/20"
+            onClick={handleUpdateCart}
+          >
             Update Cart
           </button>
         </div>
@@ -100,7 +207,7 @@ const Cart = () => {
               <h3 className="text-2xl font-medium mb-5">Cart Total</h3>
               <div className="py-3 flex justify-between border-b-2 border-black/50">
                 <span>Subtotal:</span>
-                <span>$1750</span>
+                <span>₹ {usercart?.cartTotalPrice}</span>
               </div>
               <div className="py-3 flex justify-between border-b-2 border-black/50">
                 <span>Shipping:</span>
@@ -108,12 +215,14 @@ const Cart = () => {
               </div>
               <div className="py-3 flex justify-between">
                 <span>Total:</span>
-                <span>$1750</span>
+                <span>₹ {usercart?.cartTotalPrice}</span>
               </div>
               <center>
-                <button className="bg-red-500/90 text-white py-2 px-8 mx-auto rounded-sm border border-black/20">
-                  Proceed to checkout
-                </button>
+                <Link to="/checkout">
+                  <button className="bg-red-500/90 text-white py-2 px-8 mx-auto rounded-sm border border-black/20">
+                    Proceed to checkout
+                  </button>
+                </Link>
               </center>
             </div>
           </div>
