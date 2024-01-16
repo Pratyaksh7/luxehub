@@ -9,15 +9,13 @@ const OrderSchema = new mongoose.Schema(
         quantity: { type: Number, default: 1 },
       },
     ],
-    shipping_address: [
-      {
-        street: { type: String },
-        city: { type: String },
-        state: { type: String },
-        zip: { type: String },
-        country: { type: String },
-      },
-    ],
+    shippingAddress: {
+      street: { type: String },
+      city: { type: String },
+      state: { type: String },
+      zip: { type: String },
+      country: { type: String },
+    },
     contact_details: {
       email: { type: String },
       phone: { type: String },
@@ -25,6 +23,9 @@ const OrderSchema = new mongoose.Schema(
     status: { type: String, default: "pending" }, // Order status (pending, confirmed, shipped, etc.)
     total_price: { type: Number },
     first_name: { type: String },
+    razorpay_order_data: {
+      type: Object,
+    },
   },
   {
     timestamps: true,
