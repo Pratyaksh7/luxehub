@@ -23,6 +23,7 @@ const WishList = () => {
           {wishlistData?.length > 0 &&
             wishlistData?.map((product) => (
               <ProductCard
+              product={product}
                 id={product?._id}
                 // image={GamePad}
                 image={product?.images[0]}

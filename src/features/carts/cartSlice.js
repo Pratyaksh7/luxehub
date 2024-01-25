@@ -12,7 +12,23 @@ const initialState = {
 
 export const addtocart = createAsyncThunk(
   "addtocart",
-  async ({ userId, productId, quantity }) => {
+  async ({
+    userId,
+    id,
+    name,
+    description,
+    categories,
+    price,
+    currencies,
+    stock_qty,
+    manufacturer,
+    images,
+    attributes,
+    tags,
+    rating,
+    reviews,
+    quantity,
+  }) => {
     const response = await fetch(
       `http://localhost:5000/carts/${userId}/items`,
       {
@@ -20,7 +36,22 @@ export const addtocart = createAsyncThunk(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId, quantity }),
+        body: JSON.stringify({
+          id,
+          name,
+          description,
+          categories,
+          price,
+          currencies,
+          stock_qty,
+          manufacturer,
+          images,
+          attributes,
+          tags,
+          rating,
+          reviews,
+          quantity,
+        }),
       }
     );
     return await response.json();
@@ -29,7 +60,23 @@ export const addtocart = createAsyncThunk(
 
 export const addToWishlist = createAsyncThunk(
   "addToWishlist",
-  async ({ userId, productId, productName, quantity, price }) => {
+  async ({
+    userId,
+    id,
+    name,
+    description,
+    categories,
+    price,
+    currencies,
+    stock_qty,
+    manufacturer,
+    images,
+    attributes,
+    tags,
+    rating,
+    reviews,
+    quantity,
+  }) => {
     const response = await fetch(
       `http://localhost:5000/carts/${userId}/wishlist`,
       {
@@ -37,7 +84,22 @@ export const addToWishlist = createAsyncThunk(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId, productName, quantity, price }),
+        body: JSON.stringify({
+          id,
+          name,
+          description,
+          categories,
+          price,
+          currencies,
+          stock_qty,
+          manufacturer,
+          images,
+          attributes,
+          tags,
+          rating,
+          reviews,
+          quantity,
+        }),
       }
     );
     return await response.json();
@@ -118,9 +180,9 @@ export const fetchCartTotalPrice = createAsyncThunk(
 
 export const deleteFromCart = createAsyncThunk(
   "deleteFromCart",
-  async ({ userId, productId }) => {
+  async ({ userId, id }) => {
     const response = await fetch(
-      `http://localhost:5000/carts/${userId}/items/${productId}`,
+      `http://localhost:5000/carts/${userId}/items/${id}`,
       {
         method: "DELETE",
         headers: {

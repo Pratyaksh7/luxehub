@@ -51,16 +51,17 @@ const HomePageFlashSale = () => {
       <div className="product-list px-2 md:px-5 flex gap-2 justify-evenly md:justify-start md:gap-10 flex-wrap ">
         {products &&
           products.map((product) => (
-              <ProductCard
-                id={product?._id}
-                // image={GamePad}
-                image={product?.images[0]}
-                discount="-40%"
-                name={product?.name}
-                discount_price={product?.price}
-                actual_price={product?.price}
-                rating={product.rating}
-              />
+            <ProductCard
+              product={product}
+              id={product?._id}
+              // image={GamePad}
+              image={product?.images[0]}
+              discount="-40%"
+              name={product?.name}
+              discount_price={product?.price}
+              actual_price={product?.price}
+              rating={product.rating}
+            />
           ))}
         {/* <ProductCard image={Keyboard} discount="-35%" name="AK-900 Wired Keyboard" discount_price="960" actual_price="1160" />
         <ProductCard image={LCD} discount="-30%" name="IPS LCD Gaming Monitor" discount_price="370" actual_price="400" />

@@ -2,6 +2,54 @@ const Product = require("../models/Product.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { default: mongoose } = require("mongoose");
+const { getChannel } = require("../channelModule");
+const { SubscribeMessage, PublishMessage } = require("../utils");
+const { CART_BINDING_KEY } = require("../config");
+
+const channel = getChannel();
+SubscribeMessage(channel, service);
+
+async function service(data) {
+  const parsedData = JSON.parse(data);
+
+  switch (parsedData?.event) {
+    case "GET_PRODUCT_DETAILS":
+      await getProductDetails(parsedData?.productDetails);
+      break;
+
+    default:
+      return null;
+  }
+}
+
+//------------ Functions to perform certain task -------------
+// Function to get a Product
+async function getProductDetails(productDetails) {
+  try {
+    const productIds = productDetails.map((item) => item.productId);
+    const promises = productIds.map(async (productId, i) => {
+      const product = await Product.findById(productId);
+      if (!product) {
+        return {};
+      } else {
+        return product;
+      }
+    });
+    const products = await Promise.all(promises);
+    PublishMessage(
+      channel,
+      CART_BINDING_KEY,
+      JSON.stringify({
+        event: "PRODUCTS_FOUND",
+        status: "ok",
+        message: "Data found.",
+        data: products || [],
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 exports.Ping = async (req, res, next) => {
   try {
@@ -162,10 +210,10 @@ exports.searchProduct = async (req, res, next) => {
     const query = {};
     if (keywords) {
       query.$or = [
-        { name: { $regex: keywords, $options: 'i' } },
-        { description: { $regex: keywords, $options: 'i' } },
-        { tags: { $regex: keywords, $options: 'i' } }
-    ];
+        { name: { $regex: keywords, $options: "i" } },
+        { description: { $regex: keywords, $options: "i" } },
+        { tags: { $regex: keywords, $options: "i" } },
+      ];
     }
     if (category) {
       query.categories = category;

@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 
 const ProductCard = ({
+  product,
   id = "",
   image,
   discount,
@@ -32,11 +33,23 @@ const ProductCard = ({
     if (id !== "") {
       const data = {
         userId: userData?._id,
-        productId: id,
+        id,
+        name: product?.name,
+        description: product?.description,
+        categories: product?.categories,
+        price: parseFloat(actual_price),
+        currencies: product?.currencies,
+        stock_qty: product?.stock_qty,
+        manufacturer: product?.manufacturer,
+        images: product?.images,
+        attributes: product?.attributes,
+        tags: product?.tags,
+        rating: product?.rating,
+        reviews: product?.reviews,
         quantity: 1,
       };
       await dispatch(addtocart(data));
-      await dispatch(fetchCartItems(userData?._id))
+      await dispatch(fetchCartItems(userData?._id));
       if (error) {
         toast.error(message);
       } else if (rqstStatus === "ok") {
@@ -52,13 +65,23 @@ const ProductCard = ({
     if (id !== "") {
       const data = {
         userId: userData?._id,
-        productId: id,
-        productName: name,
-        quantity: 1,
+        id,
+        name: product?.name,
+        description: product?.description,
+        categories: product?.categories,
         price: parseFloat(actual_price),
+        currencies: product?.currencies,
+        stock_qty: product?.stock_qty,
+        manufacturer: product?.manufacturer,
+        images: product?.images,
+        attributes: product?.attributes,
+        tags: product?.tags,
+        rating: product?.rating,
+        reviews: product?.reviews,
+        quantity: 1,
       };
       await dispatch(addToWishlist(data));
-      await dispatch(fetchWishlistItems(userData?._id))
+      await dispatch(fetchWishlistItems(userData?._id));
       if (error) {
         toast.error(message);
       } else if (rqstStatus === "ok") {
@@ -77,7 +100,7 @@ const ProductCard = ({
         productId: id,
       };
       await dispatch(deleteFromWishlist(data));
-      await dispatch(fetchWishlistItems(userData?._id))
+      await dispatch(fetchWishlistItems(userData?._id));
       setTimeout(() => {
         if (error) {
           toast.error(message);

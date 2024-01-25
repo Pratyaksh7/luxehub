@@ -86,9 +86,10 @@ const Cart = () => {
     if (id !== "") {
       const data = {
         userId: userData?._id,
-        productId: id,
+        id
       };
       await dispatch(deleteFromCart(data));
+      console.log({id,cartData})
       await dispatch(fetchCartItems(userData?._id));
       await dispatch(fetchCartTotalPrice(userData?._id));
       setCartData((prevCartData) =>
@@ -155,7 +156,6 @@ const Cart = () => {
       title: "Action",
       dataIndex: "action",
       render: (x, dataObject) => {
-        console.log({ x, dataObject });
         return (
           <>
             <Trash2

@@ -34,27 +34,27 @@ async function getCartItemsPrice(cartItems) {
   return await Promise.all(promises);
 }
 
-app.get("/carts/:userId/total", async (req, res) => {
-  const { userId } = req.params;
-  try {
-    const { data } = await axios.get(`http://localhost:3003/carts/${userId}`);
-    if (data?.data?.items?.length < 1)
-      return res
-        .status(400)
-        .json({ status: "error", message: "No items in the cart.", data: [] });
-    const productsPrices = data?.data && (await getCartItemsPrice(data?.data))
-      .reduce((acc, item) => acc + item.totalPrice, 0)
-      .toFixed(4);
-    return res.status(200).json({
-      status: "ok",
-      message: "Total cost retrieved successfully",
-      data: productsPrices,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
+// app.get("/carts/:userId/total", async (req, res) => {
+//   const { userId } = req.params;
+//   try {
+//     const { data } = await axios.get(`http://localhost:3003/carts/${userId}`);
+//     if (data?.data?.items?.length < 1)
+//       return res
+//         .status(400)
+//         .json({ status: "error", message: "No items in the cart.", data: [] });
+//     const productsPrices = data?.data && (await getCartItemsPrice(data?.data))
+//       .reduce((acc, item) => acc + item.totalPrice, 0)
+//       .toFixed(4);
+//     return res.status(200).json({
+//       status: "ok",
+//       message: "Total cost retrieved successfully",
+//       data: productsPrices,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
 async function getProductDetails(wishlistItems) {
   const apiBaseURL = "http://localhost:3002/products";
@@ -75,29 +75,6 @@ async function getProductDetails(wishlistItems) {
   return await Promise.all(promises);
 }
 
-app.get("/carts/:userId/wishlist", async (req, res) => {
-  const { userId } = req.params;
-  try {
-    const { data } = await axios.get(
-      `http://localhost:3003/carts/${userId}/wishlist`
-    );
-    if (data?.data?.length < 1)
-      return res.status(400).json({
-        status: "error",
-        message: "No items in the Wishlist.",
-        data: [],
-      });
-    const productsData = await getProductDetails(data.data);
-    return res.status(200).json({
-      status: "ok",
-      message: "Data found.",
-      data: productsData,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
 
 setupLogging(app);
 setupRateLimit(app, ROUTES);

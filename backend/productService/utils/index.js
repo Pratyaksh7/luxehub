@@ -2,8 +2,11 @@ const amqplib = require("amqplib");
 const {
   MESSAGE_BROKER_URL,
   EXCHANGE_NAME,
+  ORDER_QUEUE,
   ORDER_BINDING_KEY,
-  PAYMENT_QUEUE,
+  CART_BINDING_KEY,
+  CART_QUEUE,
+  PRODUCT_BINDING_KEY,
 } = require("../config/index");
 /* ---------------------------- message broker ---------------------- */
 
@@ -30,19 +33,15 @@ module.exports.PublishMessage = async (channel, binding_key, message) => {
 
 // subscribe messages
 module.exports.SubscribeMessage = async (channel, service) => {
-  const appQueue = await channel.assertQueue(PAYMENT_QUEUE);
 
-  channel.bindQueue(appQueue.queue, EXCHANGE_NAME, ORDER_BINDING_KEY);
+  const appQueue = await channel.assertQueue(CART_QUEUE);
+
+  channel.bindQueue(appQueue.queue, EXCHANGE_NAME, PRODUCT_BINDING_KEY);
 
   channel.consume(appQueue.queue, (data) => {
-    try {
-      service(data.content.toString());
-
-      console.log("received data");
-      console.log(data.content.toString());
-      channel.ack(data);
-    } catch (error) {
-      console.log("Subscribed rejected")
-    }
+    //console.log("received data");
+    // console.log(data.content.toString());
+    channel.ack(data);
+    service(data.content.toString());
   });
 };

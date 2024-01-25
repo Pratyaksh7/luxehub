@@ -5,10 +5,12 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const Razorpay = require("razorpay");
 const { CreateChannel } = require("./utils");
+const { initializeChannel, getChannel } = require("../shoppingCartService/channelModule");
 
 const StartServer = async () => {
-  const app = express();
+  await initializeChannel();
 
+  const app = express();
   app.use(
     bodyParser.json({
       limit: "50mb",
@@ -24,13 +26,11 @@ const StartServer = async () => {
   );
 
   app.use(cors());
-
-  const channel = await CreateChannel();
-  // middleware to set this channel to req.channel
-  const channelMiddleware = (req, res, next) => {
-    req.channel = channel;
+  app.use((req, res, next) => {
+    req.channel = getChannel();
     next();
-  };
+  })
+
 
   exports.instance = new Razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
@@ -41,7 +41,7 @@ const StartServer = async () => {
     res.status(200).json({ key: process.env.RAZORPAY_API_KEY })
   );
   //-----Custom Routes ------
-  app.use("/payments",channelMiddleware, require("./routes/payment.route"));
+  app.use("/payments", require("./routes/payment.route"));
 
   const PORT = 3005;
   app.listen(PORT, () => {
