@@ -7,6 +7,5 @@ module.exports = {
     ORDER_BINDING_KEY: 'ORDER_SERVICE',
     CART_BINDING_KEY: 'CART_SERVICE',
     PRODUCT_BINDING_KEY: 'PRODUCT_SERVICE',
-    ORDER_QUEUE: 'ORDER_QUEUE',// FROM: which microservice
-    PRODUCT_QUEUE: 'PRODUCT_QUEUE'
+    CART_QUEUE: 'CART_QUEUE',// FROM: which microservice
 }

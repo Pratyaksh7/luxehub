@@ -4,7 +4,7 @@ const cartController = require("../controllers/cart.controller");
 const router = express.Router()
 router.get("/ping", cartController.Ping)
 router.get("/:userId", cartController.getCartItems);
-// router.get("/:userId/total", cartController.getCartTotal);
+router.get("/:userId/total", cartController.getCartTotal);
 router.get("/:userId/wishlist", cartController.getWishList);
 
 router.post('/:userId/items', cartController.addToCart);

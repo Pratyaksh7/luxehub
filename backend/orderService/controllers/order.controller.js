@@ -1,155 +1,151 @@
 const { default: axios } = require("axios");
 const Order = require("../models/Order.model");
-const { SubscribeMessage, CreateChannel, PublishMessage } = require("../utils");
+const { SubscribeMessage, PublishMessage } = require("../utils");
 const { PAYMENT_BINDING_KEY, CART_BINDING_KEY } = require("../config");
 const ShippingAddress = require("../models/ShippingAddress.model");
+const { getChannel } = require("../channelModule");
 
-async function init() {
-  const channel = await CreateChannel();
+const channel = getChannel();
+SubscribeMessage(channel, service);
 
-  const service = async (data) => {
-    try {
-      const parsedData = JSON.parse(data);
-      switch (parsedData?.event) {
-        case "CREATE_AN_ORDER":
-          await createOrder(parsedData?.orderDetails, parsedData?.order);
-          break;
+async function service(data) {
+  try {
+    const parsedData = JSON.parse(data);
+    switch (parsedData?.event) {
+      case "CREATE_AN_ORDER":
+        await createOrder(parsedData?.orderDetails, parsedData?.order);
+        break;
 
-        case "UPDATE_ORDER_STATUS":
-          await updateOrderStatus(parsedData?.orderData);
-          break;
+      case "UPDATE_ORDER_STATUS":
+        await updateOrderStatus(parsedData?.orderData);
+        break;
 
-        default:
-          return null;
-      }
-    } catch (error) {
-      console.error("Error parsing data:", error);
+      default:
+        return null;
     }
-  };
-
-  SubscribeMessage(channel, service);
-
-  //------------ Functions to perform certain task -------------
-  //Function to create order
-  async function createOrder(orderDetails, order) {
-    try {
-      const {
-        items,
-        shipping_address,
-        contact_details,
-        total_price,
-        first_name,
-      } = orderDetails.orderDetails;
-      const userId = orderDetails?.userId;
-      // console.log({ orderDetails, order });
-      if (
-        !userId ||
-        !items ||
-        !shipping_address ||
-        !contact_details ||
-        !total_price ||
-        !first_name
-      ) {
-        PublishMessage(
-          channel,
-          PAYMENT_BINDING_KEY,
-          JSON.stringify({
-            event: "ALL_FIELDS_REQUIRED",
-            status: "error",
-            message: "All fields are required.",
-          })
-        );
-      } else {
-        // Save or update the ShippingAddress
-        await saveOrUpdateShippingAddress(userId, shipping_address);
-
-        // Create a new order
-        const newOrder = new Order({
-          userId,
-          items,
-          shippingAddress: shipping_address,
-          contact_details,
-          total_price,
-          first_name,
-          razorpay_order_data: order,
-        });
-        await newOrder.save();
-
-        // Clear the cart from Shopping Cart Microservice
-        PublishMessage(
-          channel,
-          CART_BINDING_KEY,
-          JSON.stringify({
-            event: "CLEAR_THE_CART",
-            userId: userId,
-          })
-        );
-
-        // Order created Successful
-        PublishMessage(
-          channel,
-          PAYMENT_BINDING_KEY,
-          JSON.stringify({
-            event: "ORDER_CREATED",
-            status: "ok",
-            message: "Order is Placed successfully",
-            data: order,
-          })
-        );
-      }
-    } catch (error) {
-      console.log(error);
-      // next(error);
-    }
-  }
-
-  // Function to save or update ShippingAddress
-  async function saveOrUpdateShippingAddress(userId, newAddress) {
-    const existingShippingAddress = await ShippingAddress.findOne({ userId });
-
-    if (existingShippingAddress) {
-      // If it exists, update the existing document by adding the new address with a unique street
-      // Check if the new address's street already exists in the array
-      const isDuplicateStreet = existingShippingAddress.shipping_address.some(
-        (existingAddress) => {
-          return existingAddress.street === newAddress.street;
-        }
-      );
-
-      // Add the new address only if the street doesn't already exist
-      if (!isDuplicateStreet) {
-        existingShippingAddress.shipping_address.push(newAddress);
-        return existingShippingAddress.save();
-      } else {
-        // Handle case where the street already exists (optional)
-        return existingShippingAddress;
-      }
-    } else {
-      // If it doesn't exist, create a new document with the unique street
-      const newShippingAddress = new ShippingAddress({
-        userId,
-        shipping_address: [newAddress],
-      });
-      return newShippingAddress.save();
-    }
-  }
-
-  // Function to update Order status
-  async function updateOrderStatus(orderData) {
-    try {
-      const existingOrder = await Order.find({
-        "razorpay_order_data.id": orderData?.order_id,
-      });
-      existingOrder[0].status = orderData?.status;
-
-      await existingOrder[0]?.save();
-    } catch (error) {
-      console.log(error);
-    }
+  } catch (error) {
+    console.error("Error parsing data:", error);
   }
 }
 
-init();
+//------------ Functions to perform certain task -------------
+//Function to create order
+async function createOrder(orderDetails, order) {
+  try {
+    const {
+      items,
+      shipping_address,
+      contact_details,
+      total_price,
+      first_name,
+    } = orderDetails.orderDetails;
+    const userId = orderDetails?.userId;
+    // console.log({ orderDetails, order });
+    if (
+      !userId ||
+      !items ||
+      !shipping_address ||
+      !contact_details ||
+      !total_price ||
+      !first_name
+    ) {
+      PublishMessage(
+        channel,
+        PAYMENT_BINDING_KEY,
+        JSON.stringify({
+          event: "ALL_FIELDS_REQUIRED",
+          status: "error",
+          message: "All fields are required.",
+        })
+      );
+    } else {
+      // Save or update the ShippingAddress
+      await saveOrUpdateShippingAddress(userId, shipping_address);
+
+      // Create a new order
+      const newOrder = new Order({
+        userId,
+        items,
+        shippingAddress: shipping_address,
+        contact_details,
+        total_price,
+        first_name,
+        razorpay_order_data: order,
+      });
+      await newOrder.save();
+
+      // Clear the cart from Shopping Cart Microservice
+      PublishMessage(
+        channel,
+        CART_BINDING_KEY,
+        JSON.stringify({
+          event: "CLEAR_THE_CART",
+          userId: userId,
+        })
+      );
+
+      // Order created Successful
+      PublishMessage(
+        channel,
+        PAYMENT_BINDING_KEY,
+        JSON.stringify({
+          event: "ORDER_CREATED",
+          status: "ok",
+          message: "Order is Placed successfully",
+          data: order,
+        })
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    // next(error);
+  }
+}
+
+// Function to save or update ShippingAddress
+async function saveOrUpdateShippingAddress(userId, newAddress) {
+  const existingShippingAddress = await ShippingAddress.findOne({ userId });
+
+  if (existingShippingAddress) {
+    // If it exists, update the existing document by adding the new address with a unique street
+    // Check if the new address's street already exists in the array
+    const isDuplicateStreet = existingShippingAddress.shipping_address.some(
+      (existingAddress) => {
+        return existingAddress.street === newAddress.street;
+      }
+    );
+
+    // Add the new address only if the street doesn't already exist
+    if (!isDuplicateStreet) {
+      existingShippingAddress.shipping_address.push(newAddress);
+      return existingShippingAddress.save();
+    } else {
+      // Handle case where the street already exists (optional)
+      return existingShippingAddress;
+    }
+  } else {
+    // If it doesn't exist, create a new document with the unique street
+    const newShippingAddress = new ShippingAddress({
+      userId,
+      shipping_address: [newAddress],
+    });
+    return newShippingAddress.save();
+  }
+}
+
+// Function to update Order status
+async function updateOrderStatus(orderData) {
+  try {
+    const existingOrder = await Order.find({
+      "razorpay_order_data.id": orderData?.order_id,
+    });
+    existingOrder[0].status = orderData?.status;
+
+    await existingOrder[0]?.save();
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 exports.Ping = async (req, res, next) => {
   try {
@@ -314,13 +310,11 @@ exports.shippingAddressesList = async (req, res, next) => {
       return res
         .status(200)
         .json({ status: "error", message: "No Shipping Addresses found" });
-    return res
-      .status(200)
-      .json({
-        status: "ok",
-        message: "Shipping Addresses found.",
-        data: shippingAddress[0]?.shipping_address,
-      });
+    return res.status(200).json({
+      status: "ok",
+      message: "Shipping Addresses found.",
+      data: shippingAddress[0]?.shipping_address,
+    });
   } catch (error) {
     console.log(error);
     next(error);

@@ -1,5 +1,5 @@
 const amqplib = require("amqplib");
-const {MESSAGE_BROKER_URL, EXCHANGE_NAME, QUEUE_NAME, PAYMENT_BINDING_KEY} = require("../config/index")
+const {MESSAGE_BROKER_URL, EXCHANGE_NAME, ORDER_QUEUE, PAYMENT_BINDING_KEY} = require("../config/index")
 /* ---------------------------- message broker ---------------------- */
 
 // create a channel
@@ -26,7 +26,7 @@ module.exports.PublishMessage = async (channel, binding_key, message) => {
 
 // subscribe messages
 module.exports.SubscribeMessage = async (channel, service) => {
-  const appQueue = await channel.assertQueue(QUEUE_NAME);
+  const appQueue = await channel.assertQueue(ORDER_QUEUE);
 
   channel.bindQueue(appQueue.queue, EXCHANGE_NAME, PAYMENT_BINDING_KEY);
 
