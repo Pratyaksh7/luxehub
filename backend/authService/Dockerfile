@@ -1,13 +1,13 @@
-FROM node
+FROM node 
 
-WORKDIR /app/auth
+WORKDIR /app  
 
-COPY package.json .
-
+COPY package*.json ./  
 RUN npm install
 
-COPY . .
+COPY . .  
 
-EXPOSE 3001
+
+EXPOSE 3001  
 
 CMD ["npm", "start"]

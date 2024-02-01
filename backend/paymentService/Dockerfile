@@ -1,13 +1,13 @@
-FROM node
+FROM node 
 
-WORKDIR /app/payment
+WORKDIR /app  
 
-COPY package.json .
-
+COPY package*.json ./  
 RUN npm install
 
-COPY . .
+COPY . .  
 
-EXPOSE 3005
+
+EXPOSE 3005  
 
 CMD ["npm", "start"]

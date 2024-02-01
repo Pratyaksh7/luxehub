@@ -1,0 +1,93 @@
+# Since at the time of development all the services are using local mongodb
+# But in deployment we might need a hosted mongodb
+# so for that purpose we will use mongo image for all the microservices here
+
+version: '3'
+services:
+  # 1st Service
+  nosql-db:
+    image: mongo
+    ports:
+      - "27018:27017"
+    container_name: nosql-db
+    volumes:
+      - ./db/:/data/db
+  # 2nd Service
+  auth:
+    build:
+      dockerfile: Dockerfile
+      context: ./authService
+    container_name: auth
+    ports:
+      - "3001:3001"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - ./authService:/app
+  # 3rd Service 
+  products:
+    build:
+      dockerfile: Dockerfile
+      context: ./productService
+    container_name: products
+    ports:
+      - "3002:3002"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - ./productService:/app
+  # 4th Service
+  carts:
+    build:
+      dockerfile: Dockerfile
+      context: ./shoppingCartService
+    container_name: carts
+    ports:
+      - "3003:3003"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - ./shoppingCartService:/app
+  # 5th Service
+  orders:
+    build:
+      dockerfile: Dockerfile
+      context: ./orderService
+    container_name: orders
+    ports:
+      - "3004:3004"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - ./orderService:/app
+  # 6th Service
+  payments:
+    build:
+      dockerfile: Dockerfile
+      context: ./paymentService
+    container_name: payments
+    ports:
+      - "3005:3005"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - ./paymentService:/app
+
+  # 7th Service
+  nginx-proxy:
+    build:
+      dockerfile: Dockerfile
+      context: ./proxy
+    depends_on:
+      - auth
+      - products
+      - carts
+      - orders
+      - payments
+    ports:
+      - "80:80"

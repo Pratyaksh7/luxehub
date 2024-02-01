@@ -1,13 +1,13 @@
-FROM node
+FROM node 
 
-WORKDIR /app/shoppingCart
+WORKDIR /app  
 
-COPY package.json .
-
+COPY package*.json ./  
 RUN npm install
 
-COPY . .
+COPY . .  
 
-EXPOSE 3003
+
+EXPOSE 3003  
 
 CMD ["npm", "start"]
