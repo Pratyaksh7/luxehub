@@ -1,4 +1,6 @@
-const Footer = () => {
+import React from "react";
+
+const Footer: React.FC = () => {
   return (
     <div className="bg-black/95 text-white">
       <div className="flex justify-evenly p-10">

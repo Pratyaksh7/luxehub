@@ -1,7 +1,34 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const initialState = {
+// ------------- All interfaces are below here --------------------
+interface AuthState {
+  userData: {};
+  message: string;
+  error: boolean;
+  loading: boolean;
+  token: string | null;
+  rqstStatus: string;
+}
+
+interface SignupPayload {
+  status: string;
+  message: string;
+}
+
+interface SigninPayload {
+  data: {
+    token: string;
+    userData: any;
+  }
+  status: string;
+  message: string;
+}
+
+
+// ------------- All interfaces are above here ---------------------
+
+const initialState: AuthState = {
   userData: {},
   message: "",
   error: false,
@@ -10,7 +37,7 @@ const initialState = {
   rqstStatus: ""
 };
 
-export const signup = createAsyncThunk("signup", async (values) => {
+export const signup = createAsyncThunk<SignupPayload, { values: any }>("signup", async (values) => {
   const response = await fetch(`http://localhost:5000/auth/signup`, {
     method: "POST",
     headers: {
@@ -21,7 +48,7 @@ export const signup = createAsyncThunk("signup", async (values) => {
   return await response.json();
 });
 
-export const signin = createAsyncThunk("signin", async (values) => {
+export const signin = createAsyncThunk<SigninPayload, { values: any}>("signin", async (values) => {
   const response = await fetch(`http://localhost:5000/auth/signin`, {
     method: "POST",
     headers: {
@@ -36,7 +63,7 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setAuthdata: (state, action) => {
+    setAuthdata: (state, action: PayloadAction<{ token: string; userData: any }>) => {
       state.token = action.payload.token;
       state.userData = action.payload.userData;
     }
@@ -52,10 +79,10 @@ export const authSlice = createSlice({
 
     builder.addCase(signup.fulfilled, (state, action) => {
       state.loading = false;
-      if(action.payload.status == "error"){
+      if (action.payload.status == "error") {
         state.error = true
         state.rqstStatus = "error"
-      }else{
+      } else {
         state.rqstStatus = "ok"
       }
       state.message = action.payload.message;
@@ -64,7 +91,7 @@ export const authSlice = createSlice({
     builder.addCase(signup.rejected, (state, action) => {
       state.loading = false;
       state.error = true;
-      state.message = action.payload.message;
+      // state.message = action.payload.message;
     });
 
     // signin cases
@@ -75,10 +102,10 @@ export const authSlice = createSlice({
 
     builder.addCase(signin.fulfilled, (state, action) => {
       state.loading = false;
-      if(action.payload.status == "error"){
+      if (action.payload.status == "error") {
         state.error = true
         state.rqstStatus = "error"
-      }else{
+      } else {
         state.rqstStatus = "ok"
         state.userData = action.payload.data
         state.token = action.payload.data.token
@@ -89,11 +116,11 @@ export const authSlice = createSlice({
     builder.addCase(signin.rejected, (state, action) => {
       state.loading = false;
       state.error = true;
-      state.message = action.payload.message;
+      // state.message = action.payload.message;
     });
   },
 });
 
-export const {setAuthdata} = authSlice.actions;
+export const { setAuthdata } = authSlice.actions;
 
 export default authSlice.reducer;

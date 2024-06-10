@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import Star from "../assets/images/star.svg";
 import { EyeIcon, HeartIcon, Trash2Icon } from "lucide-react";
@@ -12,7 +13,57 @@ import {
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 
-const ProductCard = ({
+interface Product {
+  name: string;
+  description: string;
+  categories: string[];
+  price: number;
+  currencies: string[];
+  stock_qty: number;
+  manufacturer: string;
+  images: string[];
+  attributes: any[];
+  tags: string[];
+  rating: number;
+  reviews: any[];
+  quantity: number;
+}
+
+interface ProductCardProps {
+  product: Product;
+  id: string;
+  image: string;
+  discount: number;
+  name: string;
+  discount_price: number;
+  actual_price: number;
+  section: string;
+  rating: number;
+}
+
+interface ItemData {
+  userId: string;
+  id: string;
+  name: string;
+  description: string;
+  categories: string[];
+  price: number;
+  currencies: string[];
+  stock_qty: number;
+  manufacturer: string;
+  images: string[];
+  attributes: any[];
+  tags: string[];
+  rating: number;
+  reviews: any[];
+  quantity: number;
+}
+interface DeleteWishlistData {
+  userId: string;
+  productId: string;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({
   product,
   id = "",
   image,
@@ -28,16 +79,16 @@ const ProductCard = ({
     (state) => state.carts
   );
   const dispatch = useDispatch();
-  const handleAddToCart = async (e) => {
+  const handleAddToCart = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (id !== "") {
-      const data = {
+      const data: ItemData = {
         userId: userData?._id,
         id,
         name: product?.name,
         description: product?.description,
         categories: product?.categories,
-        price: parseFloat(actual_price),
+        price: actual_price,
         currencies: product?.currencies,
         stock_qty: product?.stock_qty,
         manufacturer: product?.manufacturer,
@@ -60,16 +111,16 @@ const ProductCard = ({
     }
   };
 
-  const handleAddToWishlist = async (e) => {
+  const handleAddToWishlist = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (id !== "") {
-      const data = {
+      const data: ItemData = {
         userId: userData?._id,
         id,
         name: product?.name,
         description: product?.description,
         categories: product?.categories,
-        price: parseFloat(actual_price),
+        price: actual_price,
         currencies: product?.currencies,
         stock_qty: product?.stock_qty,
         manufacturer: product?.manufacturer,
@@ -92,10 +143,11 @@ const ProductCard = ({
     }
   };
 
-  const handleDeleteFromWishlist = async (e) => {
+  
+  const handleDeleteFromWishlist = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (id !== "") {
-      const data = {
+      const data: DeleteWishlistData = {
         userId: userData?._id,
         productId: id,
       };
@@ -120,11 +172,10 @@ const ProductCard = ({
             <img src={image} alt={name} />
           </div>
           <div
-            className={`add-to-cart ${
-              section === "Wishlist" || section === "JustForYou"
+            className={`add-to-cart ${section === "Wishlist" || section === "JustForYou"
                 ? ""
                 : "invisible group-hover:visible"
-            } cursor-pointer animate-none bg-black text-white w-full font-medium text-md md:text-xl flex justify-center items-center rounded-b-lg px-auto py-2`}
+              } cursor-pointer animate-none bg-black text-white w-full font-medium text-md md:text-xl flex justify-center items-center rounded-b-lg px-auto py-2`}
             onClick={handleAddToCart}
           >
             Add To Cart
